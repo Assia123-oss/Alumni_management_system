@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Logout - Alumni Connect{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <h2 class="card-title mb-4">Logout Confirmation</h2>
+                    <p>Are you sure you want to logout?</p>
+                    <form method="post" action="{% url 'alumni:logout' %}">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-sign-out-alt"></i> Confirm Logout
+                            </button>
+                            <a href="{% url 'alumni:dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

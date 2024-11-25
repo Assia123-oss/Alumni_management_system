@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Alumni Connect{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Section with Expandable Profile -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white shadow-lg">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h2 class="card-title display-6">Welcome, {{ user.get_full_name|default:user.username }}! 👋</h2>
+                            <p class="mb-0 lead">Class of {{ user.alumni.graduation_year }}</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-light btn-lg shadow-sm" onclick="toggleProfileInCard()">
+                                <i class="fas fa-user-circle"></i> View Profile
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Details (Hidden by default) -->
+                    <div id="profileInCard" class="mt-4" style="display: none;">
+                        <div class="card bg-white text-dark">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h4 class="text-primary mb-0">Profile Information</h4>
+                                    <div>
+                                        <a href="{% url 'alumni:profile_edit' %}" class="btn btn-primary">
+                                            <i class="fas fa-edit"></i> Edit Profile
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="p-3 bg-light rounded-3">
+                                            <h5 class="text-primary mb-3">Personal Information</h5>
+                                            <p class="mb-3">
+                                                <i class="fas fa-user text-primary me-2"></i>
+                                                <strong>Name:</strong> {{ user.get_full_name|default:user.username }}
+                                            </p>
+                                            <p class="mb-3">
+                                                <i class="fas fa-envelope text-primary me-2"></i>
+                                                <strong>Email:</strong> {{ user.email }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-3 bg-light rounded-3">
+                                            <h5 class="text-primary mb-3">Academic Information</h5>
+                                            <p class="mb-3">
+                                                <i class="fas fa-graduation-cap text-primary me-2"></i>
+                                                <strong>Graduation Year:</strong> {{ user.alumni.graduation_year }}
+                                            </p>
+                                            <p class="mb-3">
+                                                <i class="fas fa-book text-primary me-2"></i>
+                                                <strong>Degree:</strong> {{ user.alumni.degree }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Widgets -->
+    <div class="row">
+        <!-- Upcoming Events -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Upcoming Events</h5>
+                        <a href="{% url 'events:list' %}" class="btn btn-sm btn-outline-primary">View Events</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-0">Click view events button to view them.</p>
+                </div>
+            </div>
+
+            <!-- Events Participated In -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Events I've Participated In</h5>
+                </div>
+                <div class="card-body">
+                    {% if user.alumni.event_participations.all %}
+                        {% for participation in user.alumni.event_participations.all %}
+                            <div class="mb-3 {% if not forloop.last %}border-bottom pb-3{% endif %}">
+                                <h6>{{ participation.event.title }}</h6>
+                                <p class="text-muted small mb-2">
+                                    <i class="fas fa-calendar"></i> {{ participation.event.date|date:"F d, Y" }}
+                                    <span class="badge {% if participation.event.date >= now %}bg-primary{% else %}bg-secondary{% endif %}">
+                                        {{ participation.attendance_mode }}
+                                    </span>
+                                </p>
+                                <a href="{% url 'events:detail' participation.event.pk %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted mb-0">You haven't participated in any events yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">My Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Events Registered</span>
+                        <span class="badge bg-primary">{{ user.alumni.event_participations.count }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Profile Completion</span>
+                        <span class="badge bg-success">80%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Quick Links</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#" onclick="toggleProfileInCard(); return false;" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user"></i> My Profile
+                    </a>
+                    <a href="{% url 'events:list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-calendar"></i> Events Calendar
+                    </a>
+                    <a href="{% url 'alumni:directory' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-users"></i> Alumni Directory
+                    </a>
+                    <a href="#" onclick="toggleEventAnalytics(); return false;" class="list-group-item list-group-item-action">
+                        <i class="fas fa-chart-line"></i> Event Analytics
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Event Analytics Modal -->
+<div class="modal fade" id="eventAnalyticsModal" tabindex="-1" aria-labelledby="eventAnalyticsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="eventAnalyticsModalLabel">Event Analytics</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h3 class="mb-0">{{ total_events }}</h3>
+                                <small>Total Events</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h3 class="mb-0">{{ total_participants }}</h3>
+                                <small>Total Participants</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h3 class="mb-0">{{ upcoming_events_count }}</h3>
+                                <small>Upcoming Events</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participation Chart -->
+                <div class="chart-container" style="position: relative; height:400px;">
+                    <canvas id="eventParticipationChart"></canvas>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{% url 'events:list' %}" class="btn btn-primary">View All Events</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleProfileInCard() {
+    const profileSection = document.getElementById('profileInCard');
+    const isHidden = profileSection.style.display === 'none';
+    
+    // Fade effect
+    profileSection.style.opacity = '0';
+    profileSection.style.display = isHidden ? 'block' : 'none';
+    
+    if (isHidden) {
+        // Smooth fade in
+        setTimeout(() => {
+            profileSection.style.transition = 'opacity 0.3s ease-in-out';
+            profileSection.style.opacity = '1';
+        }, 10);
+    }
+}
+
+// Add animation for profile section
+document.addEventListener('DOMContentLoaded', function() {
+    const profileSection = document.getElementById('profileInCard');
+    profileSection.style.transition = 'opacity 0.3s ease-in-out';
+});
+
+// Add new function for Event Analytics
+function toggleEventAnalytics() {
+    const modal = new bootstrap.Modal(document.getElementById('eventAnalyticsModal'));
+    modal.show();
+    
+    // Initialize chart after modal is shown
+    modal._element.addEventListener('shown.bs.modal', function () {
+        initializeEventChart();
+    });
+}
+
+// Chart initialization
+function initializeEventChart() {
+    const ctx = document.getElementById('eventParticipationChart').getContext('2d');
+    
+    // Destroy existing chart if it exists
+    if (window.participationChart) {
+        window.participationChart.destroy();
+    }
+    
+    window.participationChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [{
+                label: 'Event Participation',
+                data: {{ chart_data|safe }},
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1,
+                fill: true,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Monthly Event Participation'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+
+<style>
+#profileInCard {
+    transition: all 0.3s ease-in-out;
+}
+
+#profileInCard .card {
+    border: none;
+    border-radius: 1rem;
+}
+
+#profileInCard .bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* New styles for analytics */
+.chart-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.modal-lg {
+    max-width: 800px;
+}
+
+.modal .card {
+    border: none;
+    border-radius: 0.5rem;
+}
+</style>
+<!-- Add Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}

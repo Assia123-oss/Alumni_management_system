@@ -1,0 +1,10 @@
+{% if messages %}
+    <div class="container">
+        <div class="alert alert-{% if message.0.tags == 'error' %}danger{% else %}{{ message.0.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ messages.0 }}
+            {% if messages.0 %}
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            {% endif %}
+        </div>           
+    </div>
+{% endif %}

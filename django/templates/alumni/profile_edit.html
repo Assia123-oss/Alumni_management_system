@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Alumni Connect{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                {{ form.last_name }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Graduation Year</label>
+                                {{ form.graduation_year }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Degree</label>
+                                {{ form.degree }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Current Position</label>
+                            {{ form.current_position }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            {{ form.bio }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Profile Picture</label>
+                            {{ form.profile_picture }}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'alumni:dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+/* Style form inputs */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input[type="file"] {
+    padding: 0.375rem 0;
+}
+</style>
+{% endblock %}

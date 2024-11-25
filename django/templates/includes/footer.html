@@ -1,0 +1,28 @@
+<footer class="bg-dark text-light mt-5">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Alumni Connect</h5>
+                <p>Connecting graduates, building futures.</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'alumni:home' %}" class="text-light">Home</a></li>
+                    <li><a href="{% url 'events:list' %}" class="text-light">Events</a></li>
+                    <li><a href="{% url 'alumni:directory' %}" class="text-light">Alumni Directory</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Contact Us</h5>
+                <p>
+                    <i class="fas fa-envelope"></i> assia@alumniconnect.com<br>
+                    <i class="fas fa-phone"></i> +250791753659
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="text-center py-3 border-top border-secondary">
+        <small>&copy; {% now "Y" %} Alumni Connect. All rights reserved.</small>
+    </div>
+</footer>
